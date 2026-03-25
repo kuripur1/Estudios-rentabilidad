@@ -1,0 +1,273 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line
+} from 'recharts';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('vision');
+
+  const COLORS = ['#0D9488', '#0F172A', '#B45309', '#64748B'];
+
+  // Datos financieros comparativos
+  const dataComparativa = [
+    { name: 'Solo Airbnb', ingreso: 22.7, opex: 12.3, neto: 10.4 },
+    { name: 'Uso Mixto', ingreso: 34.5, opex: 15.2, neto: 19.3 },
+  ];
+
+  const distributionData = [
+    { name: 'Airbnb (Residencial)', value: 50 },
+    { name: 'Locales Comerciales', value: 20 },
+    { name: 'Zonas Verdes / Amenidades', value: 20 },
+    { name: 'Parqueos / Accesos', value: 10 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
+      {/* Hero Section */}
+      <header className="bg-slate-900 text-white py-16 px-6 shadow-2xl">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+              <span className="bg-teal-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white">
+                Master Plan de Inversión
+              </span>
+              <h1 className="text-4xl md:text-6xl font-extrabold mt-4">
+                Huacas <span className="text-teal-500">Boutique & Plaza</span>
+              </h1>
+              <p className="text-xl opacity-80 mt-4 max-w-2xl">
+                Estrategia de uso mixto en 1,000m²: Maximizando el flujo comercial y la experiencia premium de Airbnb.
+              </p>
+            </div>
+            <div className="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm text-center">
+              <p className="text-sm uppercase opacity-60">ROI Proyectado (Optimizado)</p>
+              <p className="text-5xl font-black text-teal-400">14.5%</p>
+              <p className="text-xs mt-2 italic">Flujo Comercial + Airbnb</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Tabs Navigation */}
+      <nav className="sticky top-0 bg-white shadow-md z-50">
+        <div className="max-w-6xl mx-auto flex overflow-x-auto">
+          {[
+            { id: 'vision', label: 'Visión 1,000m²' },
+            { id: 'bookings', label: 'Potenciar Bookings' },
+            { id: 'comercial', label: 'Mix Comercial' },
+            { id: 'financiero', label: 'Análisis Financiero' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-8 py-5 text-sm font-bold border-b-4 transition-all whitespace-nowrap ${
+                activeTab === tab.id ? 'border-teal-600 text-teal-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <main className="max-w-6xl mx-auto px-6 mt-12 space-y-20">
+        
+        {/* VISION 1,000M2 */}
+        {activeTab === 'vision' && (
+          <div className="animate-in fade-in duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold mb-6">Optimización de Terreno</h2>
+                <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                  Huacas es el cruce estratégico de Guanacaste. Usar los 1,000m² solo para 2 casas es subutilizar el activo. Nuestra propuesta divide el lote en zonas de alta eficiencia:
+                </p>
+                <div className="space-y-4">
+                  <div className="bg-white p-5 rounded-xl border-l-4 border-teal-500 shadow-sm">
+                    <h4 className="font-bold">Zona A: Frente de Calle (200-250m²)</h4>
+                    <p className="text-sm text-slate-500">2-3 Locales comerciales. Ingreso fijo mensual. Actúa como barrera de sonido.</p>
+                  </div>
+                  <div className="bg-white p-5 rounded-xl border-l-4 border-slate-900 shadow-sm">
+                    <h4 className="font-bold">Zona B: El Oasis (500m²)</h4>
+                    <p className="text-sm text-slate-500">Los 2 apartamentos + Piscina + Rancho. Privacidad total al fondo del lote.</p>
+                  </div>
+                  <div className="bg-white p-5 rounded-xl border-l-4 border-amber-600 shadow-sm">
+                    <h4 className="font-bold">Zona C: Expansión (Fase 2)</h4>
+                    <p className="text-sm text-slate-500">Espacio reservado para 2 Tiny Homes/A-Frames para aumentar densidad sin grandes obras.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
+                <h3 className="text-center font-bold text-slate-400 uppercase text-xs mb-6">Zonificación de Metraje</h3>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={distributionData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={80}
+                        outerRadius={120}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {distributionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* POTENCIAR BOOKINGS */}
+        {activeTab === 'bookings' && (
+          <div className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
+            <div className="text-center max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4">Estrategias de Precio y Reservas</h2>
+              <p className="text-slate-600 italic">"No vendemos noches, vendemos experiencias que justifican un precio premium".</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Starlink */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border hover:border-teal-500 transition-all group">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">🛰️</div>
+                <h3 className="text-xl font-bold mb-3">Infraestructura Nómada</h3>
+                <p className="text-slate-600 text-sm">Instalación de <strong>Starlink</strong> y estaciones de trabajo. Esto nos permite capturar reservas de 14-30 días durante los meses bajos, manteniendo el ROI estable.</p>
+              </div>
+
+              {/* Wellness */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border hover:border-teal-500 transition-all group">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">🧘</div>
+                <h3 className="text-xl font-bold mb-3">Wellness Corner (Spa)</h3>
+                <p className="text-slate-600 text-sm">El rancho no es solo un área social; es un centro de bienestar. Deck de yoga y ducha exterior tipo balinés. Este "look & feel" aumenta el valor percibido un 20% en Airbnb.</p>
+              </div>
+
+              {/* Alianzas */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border hover:border-teal-500 transition-all group">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">🚜</div>
+                <h3 className="text-xl font-bold mb-3">Alianza con "Cuadras"</h3>
+                <p className="text-slate-600 text-sm">Estamos a 100m de un negocio de tours. Crearemos paquetes "Stay & Adventure". Cobramos comisión por referido e incluimos el tour en el "título" de nuestro anuncio.</p>
+              </div>
+
+              {/* Solar */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border hover:border-teal-500 transition-all group">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">☀️</div>
+                <h3 className="text-xl font-bold mb-3">Eficiencia Energética (Solar)</h3>
+                <p className="text-slate-600 text-sm">Paneles solares. El A/C es el mayor gasto en Guanacaste. Eliminar este costo variable protege el ROI neto del inversor ante alzas de tarifas eléctricas.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* COMERCIAL */}
+        {activeTab === 'comercial' && (
+          <div className="space-y-12 animate-in zoom-in-95 duration-500">
+            <div className="flex flex-col lg:flex-row gap-12 bg-teal-900 text-white p-12 rounded-3xl overflow-hidden relative">
+              <div className="lg:w-1/2 z-10">
+                <h2 className="text-3xl font-bold mb-6">Locales Comerciales: El Anclaje</h2>
+                <p className="opacity-80 mb-8 text-lg">
+                  El frente de la propiedad tiene un potencial de renta comercial de aprox. <strong>$18-22 por m²</strong>. Esto genera un flujo de caja fijo que no depende del turismo.
+                </p>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <span className="font-bold text-teal-400">Opción A: Cafetería/Bakery</span>
+                    <p className="text-sm opacity-70 italic">Sinergia total: los huéspedes de Airbnb bajan a desayunar.</p>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <span className="font-bold text-teal-400">Opción B: Farmacia / Mini-Market</span>
+                    <p className="text-sm opacity-70 italic">Servicios esenciales muy escasos en el punto exacto de Huacas.</p>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <span className="font-bold text-teal-400">Opción C: Consultorio / Oficina</span>
+                    <p className="text-sm opacity-70 italic">Cero ruido, ingresos fijos a largo plazo (contratos de 3 años).</p>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:w-1/2 flex items-center justify-center">
+                <div className="bg-white p-8 rounded-2xl text-slate-900 w-full">
+                  <h4 className="font-bold mb-4 text-center">Impacto de Seguridad Financiera</h4>
+                  <ul className="space-y-3">
+                    <li className="flex gap-2 items-center text-sm">✅ Cubre el 100% de costos de mantenimiento del complejo.</li>
+                    <li className="flex gap-2 items-center text-sm">✅ Elimina el riesgo de "meses en rojo" por baja ocupación.</li>
+                    <li className="flex gap-2 items-center text-sm">✅ Aumenta el valor de tasación bancaria (Uso Mixto).</li>
+                  </ul>
+                  <div className="mt-8 pt-6 border-t text-center">
+                    <p className="text-xs uppercase text-slate-400">Ingreso Mensual Estimado (2 locales)</p>
+                    <p className="text-3xl font-bold text-teal-600">₡650,000 - ₡800,000</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* FINANCIERO */}
+        {activeTab === 'financiero' && (
+          <div className="space-y-12 animate-in fade-in duration-500">
+            <div className="bg-white p-8 rounded-3xl shadow-lg border">
+              <h3 className="text-2xl font-bold mb-8 text-center">Comparativa: Tradicional vs. Uso Mixto Optimizado</h3>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={dataComparativa}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => `₡${value}M`} />
+                    <Legend />
+                    <Bar name="Ingreso Anual Bruto" dataKey="ingreso" fill="#0D9488" radius={[4, 4, 0, 0]} />
+                    <Bar name="Utilidad Neta Anual" dataKey="neto" fill="#B45309" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-slate-900 text-white p-8 rounded-2xl text-center">
+                  <p className="text-xs uppercase opacity-50">Inversión Adicional Locales</p>
+                  <p className="text-3xl font-bold mt-2">₡18.5M</p>
+                  <p className="text-xs opacity-40 mt-1">*Estimado construcción ligera</p>
+                </div>
+                <div className="bg-teal-600 text-white p-8 rounded-2xl text-center">
+                  <p className="text-xs uppercase opacity-50">Ingreso Proyectado Total</p>
+                  <p className="text-3xl font-bold mt-2">₡34.5M / año</p>
+                  <p className="text-xs opacity-40 mt-1">*Combinado fijo + variable</p>
+                </div>
+                <div className="bg-amber-600 text-white p-8 rounded-2xl text-center">
+                  <p className="text-xs uppercase opacity-50">Recuperación de Inversión</p>
+                  <p className="text-3xl font-bold mt-2">~7.2 Años</p>
+                  <p className="text-xs opacity-40 mt-1">*2.8 años antes que el original</p>
+                </div>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Fuentes y Notas */}
+      <footer className="max-w-6xl mx-auto px-6 mt-20 border-t pt-10 text-slate-400 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h5 className="font-bold uppercase mb-2">Fuentes de Mercado:</h5>
+            <ul className="space-y-1">
+              <li>• AirDNA - Market Data Santa Cruz / Tamarindo (2024).</li>
+              <li>• Airbnb Host Standards (Professional Fees 15%).</li>
+              <li>• Cotización Constructora Meraki (Estructura Base).</li>
+              <li>• Benchmarking Local Comercial Huacas / Villareal ($20/m²).</li>
+            </ul>
+          </div>
+          <div className="text-right">
+            <p className="italic">Este modelo asume un manejo profesional de las unidades y una estrategia de marketing digital activa.</p>
+            <p className="mt-2 font-bold text-slate-600">PROYECTO HUACAS - GUANACASTE</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
