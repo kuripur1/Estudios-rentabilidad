@@ -1,166 +1,275 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Huacas Boutique & Plaza - Master Plan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .tab-button.active { border-bottom: 4px solid #0D9488; color: #0D9488; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huacas Boutique & Plaza — Master Plan</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/recharts.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5 { font-family: 'Syne', sans-serif; }
+    .tab-active { border-bottom: 4px solid #0D9488; color: #0D9488; }
+    .tab-inactive { border-bottom: 4px solid transparent; color: #94a3b8; }
+    .tab-inactive:hover { color: #475569; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body>
+  <div id="root"></div>
 
-    <header class="bg-slate-900 text-white py-16 px-6 shadow-2xl">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-                <span class="bg-teal-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white">Master Plan de Inversión</span>
-                <h1 class="text-4xl md:text-6xl font-extrabold mt-4">Huacas <span class="text-teal-500">Boutique & Plaza</span></h1>
-                <p class="text-xl opacity-80 mt-4 max-w-2xl">Estrategia de uso mixto en 1,000m²: Maximizando el flujo comercial y la experiencia premium.</p>
-            </div>
-            <div class="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm text-center min-w-[200px]">
-                <p class="text-sm uppercase opacity-60">ROI Proyectado</p>
-                <p class="text-5xl font-black text-teal-400">14.5%</p>
-                <p class="text-xs mt-2 italic text-white/60">Flujo Comercial + Airbnb</p>
-            </div>
-        </div>
-    </header>
+  <script type="text/babel">
+    const { useState } = React;
+    const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } = Recharts;
 
-    <nav class="sticky top-0 bg-white shadow-md z-50 overflow-x-auto">
-        <div class="max-w-6xl mx-auto flex justify-center">
-            <button onclick="showTab('vision')" class="tab-button active px-8 py-5 text-sm font-bold border-b-4 border-transparent transition-all whitespace-nowrap">VISIÓN 1,000m²</button>
-            <button onclick="showTab('comercial')" class="tab-button px-8 py-5 text-sm font-bold border-b-4 border-transparent transition-all whitespace-nowrap">MIX COMERCIAL</button>
-            <button onclick="showTab('financiero')" class="tab-button px-8 py-5 text-sm font-bold border-b-4 border-transparent transition-all whitespace-nowrap">ANÁLISIS FINANCIERO</button>
-        </div>
-    </nav>
+    const COLORS = ['#0D9488', '#0F172A', '#B45309', '#64748B'];
 
-    <main class="max-w-6xl mx-auto px-6 mt-12 mb-20">
-        
-        <section id="vision" class="tab-content active animate-in fade-in duration-500">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    const dataComparativa = [
+      { name: 'Solo Airbnb', ingreso: 22.7, opex: 12.3, neto: 10.4 },
+      { name: 'Uso Mixto', ingreso: 34.5, opex: 15.2, neto: 19.3 },
+    ];
+
+    const distributionData = [
+      { name: 'Airbnb (Residencial)', value: 50 },
+      { name: 'Locales Comerciales', value: 20 },
+      { name: 'Zonas Verdes / Amenidades', value: 20 },
+      { name: 'Parqueos / Accesos', value: 10 },
+    ];
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('vision');
+
+      const tabs = [
+        { id: 'vision', label: 'Visión 1,000m²' },
+        { id: 'bookings', label: 'Potenciar Bookings' },
+        { id: 'comercial', label: 'Mix Comercial' },
+        { id: 'financiero', label: 'Análisis Financiero' },
+      ];
+
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-900 pb-12">
+          {/* Hero */}
+          <header className="bg-slate-900 text-white py-16 px-6 shadow-2xl">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
-                    <h2 class="text-3xl font-bold mb-6">Optimización de Terreno</h2>
-                    <p class="text-slate-600 text-lg leading-relaxed mb-8">Nuestra propuesta divide el lote de 1,000m² en zonas de alta eficiencia para garantizar ingresos constantes.</p>
-                    <div class="space-y-4">
-                        <div class="bg-white p-5 rounded-xl border-l-4 border-teal-500 shadow-sm">
-                            <h4 class="font-bold">Zona Comercial (Frente Calle)</h4>
-                            <p class="text-sm text-slate-500">2-3 Locales. Ingreso fijo mensual. Actúa como barrera de sonido.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl border-l-4 border-slate-900 shadow-sm">
-                            <h4 class="font-bold">Zona Residencial (El Oasis)</h4>
-                            <p class="text-sm text-slate-500">Apartamentos + Piscina al fondo para total privacidad.</p>
-                        </div>
+                  <span className="bg-teal-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white">
+                    Master Plan de Inversión
+                  </span>
+                  <h1 className="text-4xl md:text-6xl font-extrabold mt-4">
+                    Huacas <span className="text-teal-500">Boutique & Plaza</span>
+                  </h1>
+                  <p className="text-xl opacity-80 mt-4 max-w-2xl">
+                    Estrategia de uso mixto en 1,000m²: Maximizando el flujo comercial y la experiencia premium de Airbnb.
+                  </p>
+                </div>
+                <div className="bg-white/10 p-6 rounded-2xl border border-white/20 text-center">
+                  <p className="text-sm uppercase opacity-60">ROI Proyectado (Optimizado)</p>
+                  <p className="text-5xl font-black text-teal-400">14.5%</p>
+                  <p className="text-xs mt-2 italic">Flujo Comercial + Airbnb</p>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Tabs */}
+          <nav className="sticky top-0 bg-white shadow-md z-50">
+            <div className="max-w-6xl mx-auto flex overflow-x-auto">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-8 py-5 text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id ? 'tab-active' : 'tab-inactive'}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          <main className="max-w-6xl mx-auto px-6 mt-12 space-y-20">
+
+            {/* VISION */}
+            {activeTab === 'vision' && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <h2 className="text-3xl font-bold mb-6">Optimización de Terreno</h2>
+                  <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                    Huacas es el cruce estratégico de Guanacaste. Usar los 1,000m² solo para 2 casas es subutilizar el activo. Nuestra propuesta divide el lote en zonas de alta eficiencia:
+                  </p>
+                  <div className="space-y-4">
+                    <div className="bg-white p-5 rounded-xl border-l-4 border-teal-500 shadow-sm">
+                      <h4 className="font-bold">Zona A: Frente de Calle (200-250m²)</h4>
+                      <p className="text-sm text-slate-500">2-3 Locales comerciales. Ingreso fijo mensual. Actúa como barrera de sonido.</p>
                     </div>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
-                    <canvas id="distributionChart" height="300"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <section id="comercial" class="tab-content">
-            <div class="bg-teal-900 text-white p-12 rounded-3xl relative overflow-hidden">
-                <div class="lg:w-1/2 relative z-10">
-                    <h2 class="text-3xl font-bold mb-6">Locales Comerciales: El Anclaje</h2>
-                    <p class="opacity-80 mb-8 text-lg">El frente genera una renta de <strong>₡650k - ₡800k mensual</strong>. Esto cubre el 100% de los gastos operativos del complejo.</p>
-                    <div class="grid grid-cols-1 gap-4 text-slate-900">
-                        <div class="bg-white p-4 rounded-xl">
-                            <span class="font-bold text-teal-600 block">Opción: Cafetería/Bakery</span>
-                            <span class="text-sm text-slate-500">Sinergia total con huéspedes de Airbnb.</span>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl">
-                            <span class="font-bold text-teal-600 block">Opción: Farmacia / Mini-Market</span>
-                            <span class="text-sm text-slate-500">Servicio esencial ausente en este punto de Huacas.</span>
-                        </div>
+                    <div className="bg-white p-5 rounded-xl border-l-4 border-slate-900 shadow-sm">
+                      <h4 className="font-bold">Zona B: El Oasis (500m²)</h4>
+                      <p className="text-sm text-slate-500">Los 2 apartamentos + Piscina + Rancho. Privacidad total al fondo del lote.</p>
                     </div>
+                    <div className="bg-white p-5 rounded-xl border-l-4 border-amber-600 shadow-sm">
+                      <h4 className="font-bold">Zona C: Expansión (Fase 2)</h4>
+                      <p className="text-sm text-slate-500">Espacio reservado para 2 Tiny Homes/A-Frames para aumentar densidad sin grandes obras.</p>
+                    </div>
+                  </div>
                 </div>
+                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
+                  <h3 className="text-center font-bold text-slate-400 uppercase text-xs mb-6">Zonificación de Metraje</h3>
+                  <div style={{height: 400}}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={distributionData} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={5} dataKey="value">
+                          {distributionData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* BOOKINGS */}
+            {activeTab === 'bookings' && (
+              <div className="space-y-12">
+                <div className="text-center max-w-3xl mx-auto">
+                  <h2 className="text-3xl font-bold mb-4">Estrategias de Precio y Reservas</h2>
+                  <p className="text-slate-600 italic">"No vendemos noches, vendemos experiencias que justifican un precio premium".</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {[
+                    { icon: '🛰️', title: 'Infraestructura Nómada', desc: 'Instalación de Starlink y estaciones de trabajo. Esto nos permite capturar reservas de 14-30 días durante los meses bajos, manteniendo el ROI estable.' },
+                    { icon: '🧘', title: 'Wellness Corner (Spa)', desc: 'El rancho no es solo un área social; es un centro de bienestar. Deck de yoga y ducha exterior tipo balinés. Este "look & feel" aumenta el valor percibido un 20% en Airbnb.' },
+                    { icon: '🚜', title: 'Alianza con "Cuadras"', desc: 'Estamos a 100m de un negocio de tours. Crearemos paquetes "Stay & Adventure". Cobramos comisión por referido e incluimos el tour en el "título" de nuestro anuncio.' },
+                    { icon: '☀️', title: 'Eficiencia Energética (Solar)', desc: 'Paneles solares. El A/C es el mayor gasto en Guanacaste. Eliminar este costo variable protege el ROI neto del inversor ante alzas de tarifas eléctricas.' },
+                  ].map((item, i) => (
+                    <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border hover:border-teal-500 transition-all group">
+                      <div className="text-4xl mb-4">{item.icon}</div>
+                      <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                      <p className="text-slate-600 text-sm">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* COMERCIAL */}
+            {activeTab === 'comercial' && (
+              <div className="space-y-12">
+                <div className="flex flex-col lg:flex-row gap-12 bg-teal-900 text-white p-12 rounded-3xl">
+                  <div className="lg:w-1/2">
+                    <h2 className="text-3xl font-bold mb-6">Locales Comerciales: El Anclaje</h2>
+                    <p className="opacity-80 mb-8 text-lg">
+                      El frente de la propiedad tiene un potencial de renta comercial de aprox. <strong>$18-22 por m²</strong>. Esto genera un flujo de caja fijo que no depende del turismo.
+                    </p>
+                    <div className="grid grid-cols-1 gap-4">
+                      {[
+                        { label: 'Opción A: Cafetería/Bakery', note: 'Sinergia total: los huéspedes de Airbnb bajan a desayunar.' },
+                        { label: 'Opción B: Farmacia / Mini-Market', note: 'Servicios esenciales muy escasos en el punto exacto de Huacas.' },
+                        { label: 'Opción C: Consultorio / Oficina', note: 'Cero ruido, ingresos fijos a largo plazo (contratos de 3 años).' },
+                      ].map((opt, i) => (
+                        <div key={i} className="bg-white/10 p-4 rounded-xl">
+                          <span className="font-bold text-teal-400">{opt.label}</span>
+                          <p className="text-sm opacity-70 italic">{opt.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="lg:w-1/2 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-2xl text-slate-900 w-full">
+                      <h4 className="font-bold mb-4 text-center">Impacto de Seguridad Financiera</h4>
+                      <ul className="space-y-3">
+                        <li className="flex gap-2 items-center text-sm">✅ Cubre el 100% de costos de mantenimiento del complejo.</li>
+                        <li className="flex gap-2 items-center text-sm">✅ Elimina el riesgo de "meses en rojo" por baja ocupación.</li>
+                        <li className="flex gap-2 items-center text-sm">✅ Aumenta el valor de tasación bancaria (Uso Mixto).</li>
+                      </ul>
+                      <div className="mt-8 pt-6 border-t text-center">
+                        <p className="text-xs uppercase text-slate-400">Ingreso Mensual Estimado (2 locales)</p>
+                        <p className="text-3xl font-bold text-teal-600">₡650,000 - ₡800,000</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* FINANCIERO */}
+            {activeTab === 'financiero' && (
+              <div className="space-y-12">
+                <div className="bg-white p-8 rounded-3xl shadow-lg border">
+                  <h3 className="text-2xl font-bold mb-8 text-center">Comparativa: Tradicional vs. Uso Mixto Optimizado</h3>
+                  <div style={{height: 400}}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={dataComparativa}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `₡${value}M`} />
+                        <Legend />
+                        <Bar name="Ingreso Anual Bruto" dataKey="ingreso" fill="#0D9488" radius={[4, 4, 0, 0]} />
+                        <Bar name="Utilidad Neta Anual" dataKey="neto" fill="#B45309" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-slate-900 text-white p-8 rounded-2xl text-center">
+                    <p className="text-xs uppercase opacity-50">Inversión Adicional Locales</p>
+                    <p className="text-3xl font-bold mt-2">₡18.5M</p>
+                    <p className="text-xs opacity-40 mt-1">*Estimado construcción ligera</p>
+                  </div>
+                  <div className="bg-teal-600 text-white p-8 rounded-2xl text-center">
+                    <p className="text-xs uppercase opacity-50">Ingreso Proyectado Total</p>
+                    <p className="text-3xl font-bold mt-2">₡34.5M / año</p>
+                    <p className="text-xs opacity-40 mt-1">*Combinado fijo + variable</p>
+                  </div>
+                  <div className="bg-amber-600 text-white p-8 rounded-2xl text-center">
+                    <p className="text-xs uppercase opacity-50">Recuperación de Inversión</p>
+                    <p className="text-3xl font-bold mt-2">~7.2 Años</p>
+                    <p className="text-xs opacity-40 mt-1">*2.8 años antes que el original</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
+
+          {/* Footer */}
+          <footer className="max-w-6xl mx-auto px-6 mt-20 border-t pt-10 text-slate-400 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h5 className="font-bold uppercase mb-2">Fuentes de Mercado:</h5>
+                <ul className="space-y-1">
+                  <li>• AirDNA - Market Data Santa Cruz / Tamarindo (2024).</li>
+                  <li>• Airbnb Host Standards (Professional Fees 15%).</li>
+                  <li>• Cotización Constructora Meraki (Estructura Base).</li>
+                  <li>• Benchmarking Local Comercial Huacas / Villareal ($20/m²).</li>
+                </ul>
+              </div>
+              <div className="text-right">
+                <p className="italic">Este modelo asume un manejo profesional de las unidades y una estrategia de marketing digital activa.</p>
+                <p className="mt-2 font-bold text-slate-600">PROYECTO HUACAS - GUANACASTE</p>
+              </div>
             </div>
-        </section>
+          </footer>
 
-        <section id="financiero" class="tab-content">
-            <div class="bg-white p-8 rounded-3xl shadow-lg border mb-8">
-                <h3 class="text-xl font-bold mb-6 text-center text-slate-700">Comparativa: Airbnb vs. Uso Mixto (Ingreso Millones ₡)</h3>
-                <div style="height: 400px;">
-                    <canvas id="comparisonChart"></canvas>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-900 text-white p-8 rounded-2xl text-center">
-                    <p class="text-xs uppercase opacity-50">Ingreso Proyectado Total</p>
-                    <p class="text-3xl font-bold mt-2">₡34.5M / año</p>
-                </div>
-                <div class="bg-teal-600 text-white p-8 rounded-2xl text-center">
-                    <p class="text-xs uppercase opacity-50">Utilidad Neta Anual</p>
-                    <p class="text-3xl font-bold mt-2">₡19.3M</p>
-                </div>
-                <div class="bg-amber-600 text-white p-8 rounded-2xl text-center">
-                    <p class="text-xs uppercase opacity-50">Payback Estimado</p>
-                    <p class="text-3xl font-bold mt-2">~7.2 Años</p>
-                </div>
-            </div>
-        </section>
+          {/* Back Button */}
+          <div className="fixed bottom-6 right-6 z-[100]">
+            <a href="index.html" className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold hover:bg-teal-600 transition-all flex items-center gap-2 no-underline">
+              ← Volver al Análisis
+            </a>
+          </div>
+        </div>
+      );
+    }
 
-    </main>
-
-    <div class="fixed bottom-6 right-6">
-        <a href="index.html" class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold hover:bg-teal-600 transition-all flex items-center gap-2">
-            ← Volver al Análisis
-        </a>
-    </div>
-
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // Gráfico de Distribución (Pie)
-        new Chart(document.getElementById('distributionChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Airbnb (50%)', 'Comercial (20%)', 'Zonas Verdes (20%)', 'Accesos (10%)'],
-                datasets: [{
-                    data: [50, 20, 20, 10],
-                    backgroundColor: ['#0D9488', '#0F172A', '#B45309', '#64748B'],
-                    borderWidth: 0
-                }]
-            },
-            options: { plugins: { legend: { position: 'bottom' } } }
-        });
-
-        // Gráfico Comparativo (Bar)
-        new Chart(document.getElementById('comparisonChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Solo Airbnb', 'Uso Mixto Optimizado'],
-                datasets: [
-                    {
-                        label: 'Ingreso Bruto Anual (M ₡)',
-                        data: [22.7, 34.5],
-                        backgroundColor: '#0D9488',
-                        borderRadius: 5
-                    },
-                    {
-                        label: 'Utilidad Neta Anual (M ₡)',
-                        data: [10.4, 19.3],
-                        backgroundColor: '#B45309',
-                        borderRadius: 5
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-    </script>
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
