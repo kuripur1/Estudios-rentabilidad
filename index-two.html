@@ -4,30 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Huacas Boutique & Plaza - Master Plan</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-</head>
-<body>
-    <div id="root"></div>
 
-    <div class="fixed bottom-4 right-4 z-[100]">
-        <a href="index.html" class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl font-bold hover:bg-teal-600 transition-all">
-            ← Volver al Análisis
+    <style>
+        .loading-text { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; color: #64748b; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root">
+        <div class="loading-text">Cargando Master Plan... (Si ves esto mucho tiempo, revisa la consola F12)</div>
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-[100]">
+        <a href="index.html" class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold hover:bg-teal-600 transition-all flex items-center gap-2">
+            <span>←</span> Volver al Análisis
         </a>
     </div>
 
     <script type="text/babel">
-        const { useState } = React;
+        // Extraemos los componentes de la librería Recharts cargada globalmente
         const { 
             BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
             PieChart, Pie, Cell 
-        } = Recharts;
+        } = window.Recharts;
 
         const App = () => {
-            const [activeTab, setActiveTab] = useState('vision');
+            const [activeTab, setActiveTab] = React.useState('vision');
             const COLORS = ['#0D9488', '#0F172A', '#B45309', '#64748B'];
 
             const dataComparativa = [
@@ -43,60 +51,86 @@
             ];
 
             return (
-                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
-                    <header className="bg-slate-900 text-white py-16 px-6 shadow-2xl">
+                <div className="min-h-screen pb-20">
+                    <header className="bg-slate-900 text-white py-16 px-6">
                         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
                             <div>
                                 <span className="bg-teal-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white">Master Plan</span>
-                                <h1 className="text-4xl md:text-6xl font-extrabold mt-4">Huacas <span className="text-teal-500">Boutique & Plaza</span></h1>
+                                <h1 className="text-4xl md:text-5xl font-extrabold mt-4">Huacas <span className="text-teal-500">Boutique & Plaza</span></h1>
+                                <p className="opacity-70 mt-2">Estrategia de Uso Mixto Optimizado</p>
                             </div>
-                            <div className="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm text-center">
+                            <div className="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm text-center min-w-[160px]">
                                 <p className="text-sm opacity-60">ROI Proyectado</p>
                                 <p className="text-5xl font-black text-teal-400">14.5%</p>
                             </div>
                         </div>
                     </header>
 
-                    <nav className="sticky top-0 bg-white shadow-md z-50 flex justify-center">
-                        {['vision', 'bookings', 'comercial', 'financiero'].map(id => (
-                            <button key={id} onClick={() => setActiveTab(id)} className={`px-6 py-4 text-sm font-bold border-b-4 ${activeTab === id ? 'border-teal-600 text-teal-600' : 'border-transparent text-slate-400'}`}>
-                                {id.toUpperCase()}
+                    <nav className="sticky top-0 bg-white shadow-md z-50 flex justify-center overflow-x-auto">
+                        {['vision', 'comercial', 'financiero'].map(id => (
+                            <button 
+                                key={id} 
+                                onClick={() => setActiveTab(id)} 
+                                className={`px-8 py-5 text-sm font-bold border-b-4 transition-all ${activeTab === id ? 'border-teal-600 text-teal-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+                            >
+                                {id === 'vision' ? 'VISIÓN 1,000m²' : id.toUpperCase()}
                             </button>
                         ))}
                     </nav>
 
-                    <main className="max-w-6xl mx-auto px-6 mt-12">
+                    <main className="max-w-6xl mx-auto px-6 mt-12 space-y-12">
                         {activeTab === 'vision' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                                <div>
-                                    <h2 className="text-3xl font-bold mb-4">Optimización de Terreno</h2>
-                                    <p className="text-slate-600">Estrategia de uso mixto en 1,000m² para maximizar el flujo comercial.</p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                                <div className="space-y-6">
+                                    <h2 className="text-3xl font-bold text-slate-800">Optimización de Terreno</h2>
+                                    <p className="text-slate-600 text-lg leading-relaxed">
+                                        Dividimos los 1,000m² en zonas de alta eficiencia para asegurar ingresos constantes y privacidad.
+                                    </p>
+                                    <div className="bg-white p-4 rounded-xl border-l-4 border-teal-500 shadow-sm">
+                                        <h4 className="font-bold">Frente Comercial</h4>
+                                        <p className="text-sm text-slate-500">2 Locales comerciales para flujo de caja fijo.</p>
+                                    </div>
                                 </div>
-                                <div className="h-64 bg-white p-4 rounded-xl shadow-lg">
+                                <div className="h-80 bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <PieChart>
-                                            <Pie data={distributionData} dataKey="value" innerRadius={60} outerRadius={80} fill="#8884d8">
+                                            <Pie data={distributionData} dataKey="value" innerRadius={60} outerRadius={90} paddingAngle={5}>
                                                 {distributionData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
                                             </Pie>
                                             <Tooltip />
+                                            <Legend />
                                         </PieChart>
                                     </ResponsiveContainer>
                                 </div>
                             </div>
                         )}
-                        {/* Se pueden añadir las demás pestañas aquí siguiendo la misma lógica */}
+
+                        {activeTab === 'comercial' && (
+                            <div className="bg-teal-900 text-white p-10 rounded-3xl">
+                                <h2 className="text-3xl font-bold mb-4">El Anclaje Comercial</h2>
+                                <p className="opacity-80 mb-6">Generamos rentas de $18-$22 por m² que no dependen de la temporada turística.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-white/10 p-4 rounded-lg italic">"Cubre el 100% de los gastos fijos del proyecto."</div>
+                                    <div className="bg-white/10 p-4 rounded-lg italic">"Aumenta el valor de reventa de la propiedad."</div>
+                                </div>
+                            </div>
+                        )}
+
                         {activeTab === 'financiero' && (
-                             <div className="h-96 bg-white p-4 rounded-xl shadow-lg">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={dataComparativa}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Bar dataKey="ingreso" fill="#0D9488" />
-                                        <Bar dataKey="neto" fill="#B45309" />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                            <div className="space-y-8">
+                                <div className="h-[400px] bg-white p-8 rounded-3xl shadow-lg border">
+                                    <h3 className="text-center font-bold mb-6">Utilidad Neta: Airbnb vs. Mixto (Millones ₡)</h3>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={dataComparativa}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                            <XAxis dataKey="name" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Bar name="Ingreso Bruto" dataKey="ingreso" fill="#0D9488" radius={[4, 4, 0, 0]} />
+                                            <Bar name="Utilidad Neta" dataKey="neto" fill="#B45309" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
                         )}
                     </main>
