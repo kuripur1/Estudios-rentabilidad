@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huacas Boutique & Plaza - Master Plan</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <div class="fixed bottom-4 right-4 z-[100]">
+        <a href="page.html" class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl font-bold hover:bg-teal-600 transition-all">
+            ← Volver al Análisis
+        </a>
+    </div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { 
+            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+            PieChart, Pie, Cell 
+        } = Recharts;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('vision');
+            const COLORS = ['#0D9488', '#0F172A', '#B45309', '#64748B'];
+
+            const dataComparativa = [
+                { name: 'Solo Airbnb', ingreso: 22.7, neto: 10.4 },
+                { name: 'Uso Mixto', ingreso: 34.5, neto: 19.3 },
+            ];
+
+            const distributionData = [
+                { name: 'Airbnb', value: 50 },
+                { name: 'Comercial', value: 20 },
+                { name: 'Zonas Verdes', value: 20 },
+                { name: 'Accesos', value: 10 },
+            ];
+
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
+                    <header className="bg-slate-900 text-white py-16 px-6 shadow-2xl">
+                        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div>
+                                <span className="bg-teal-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white">Master Plan</span>
+                                <h1 className="text-4xl md:text-6xl font-extrabold mt-4">Huacas <span className="text-teal-500">Boutique & Plaza</span></h1>
+                            </div>
+                            <div className="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm text-center">
+                                <p className="text-sm opacity-60">ROI Proyectado</p>
+                                <p className="text-5xl font-black text-teal-400">14.5%</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <nav className="sticky top-0 bg-white shadow-md z-50 flex justify-center">
+                        {['vision', 'bookings', 'comercial', 'financiero'].map(id => (
+                            <button key={id} onClick={() => setActiveTab(id)} className={`px-6 py-4 text-sm font-bold border-b-4 ${activeTab === id ? 'border-teal-600 text-teal-600' : 'border-transparent text-slate-400'}`}>
+                                {id.toUpperCase()}
+                            </button>
+                        ))}
+                    </nav>
+
+                    <main className="max-w-6xl mx-auto px-6 mt-12">
+                        {activeTab === 'vision' && (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                <div>
+                                    <h2 className="text-3xl font-bold mb-4">Optimización de Terreno</h2>
+                                    <p className="text-slate-600">Estrategia de uso mixto en 1,000m² para maximizar el flujo comercial.</p>
+                                </div>
+                                <div className="h-64 bg-white p-4 rounded-xl shadow-lg">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie data={distributionData} dataKey="value" innerRadius={60} outerRadius={80} fill="#8884d8">
+                                                {distributionData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
+                                            </Pie>
+                                            <Tooltip />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        )}
+                        {/* Se pueden añadir las demás pestañas aquí siguiendo la misma lógica */}
+                        {activeTab === 'financiero' && (
+                             <div className="h-96 bg-white p-4 rounded-xl shadow-lg">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dataComparativa}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Bar dataKey="ingreso" fill="#0D9488" />
+                                        <Bar dataKey="neto" fill="#B45309" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        )}
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
