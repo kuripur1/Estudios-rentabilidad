@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Inversión: Proyecto Huacas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0F172A',
+                            primary: '#06B6D4',
+                            secondary: '#10B981',
+                            accent: '#F43F5E',
+                            light: '#F8FAFC',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .icon-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- Plan de Narrativa:
+         1. Introducción: Contexto de transparencia para el socio.
+         2. CAPEX: Inversión inicial desglosada (Construcción + Piscina + Muebles).
+         3. OPEX: Gastos operativos reales (Airbnb, Gestión, Fondo de Reserva).
+         4. Proyecciones: Rentabilidad a 10 años.
+         5. Fuentes: Verificación de datos con hipervínculos.
+    -->
+
+    <nav class="bg-brand-dark text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🌴</span>
+                    <span class="font-bold text-xl tracking-tight">Proyecto Huacas</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#capex" class="hover:text-brand-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Inversión</a>
+                        <a href="#opex" class="hover:text-brand-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Gastos</a>
+                        <a href="#proyecciones" class="hover:text-brand-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Rentabilidad</a>
+                        <a href="#fuentes" class="hover:text-brand-primary px-3 py-2 rounded-md text-sm font-medium transition-colors font-bold">Fuentes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-gradient-to-br from-brand-dark to-[#1E293B] text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Actualización de Rentabilidad y <span class="text-brand-primary">Estudio de Viabilidad</span></h1>
+            <p class="text-lg md:text-xl text-brand-light opacity-90 max-w-3xl mx-auto mb-8">
+                Basado en datos reales del mercado de Guanacaste y cotizaciones actuales. Se ha refinado nuestro modelo financiero para ofrecer datos y fuentas mas solidas y objetivas sobre los costos de construcción, amueblamiento y administración.
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-8">
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20">
+                    <div class="text-brand-primary text-3xl mb-1">✅</div>
+                    <div class="text-xs uppercase tracking-wider text-brand-light opacity-75">Lote y Permisos</div>
+                    <div class="font-bold text-lg">Pagos</div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20">
+                    <div class="text-brand-secondary text-3xl mb-1">₡104.2M</div>
+                    <div class="text-xs uppercase tracking-wider text-brand-light opacity-75">Total CAPEX</div>
+                    <div class="font-bold text-sm">A levantar</div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20">
+                    <div class="text-brand-accent text-3xl mb-1">10.0%</div>
+                    <div class="text-xs uppercase tracking-wider text-brand-light opacity-75">Cap Rate Neto</div>
+                    <div class="font-bold text-sm">Escenario Base</div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20">
+                    <div class="text-brand-primary text-3xl mb-1">52%</div>
+                    <div class="text-xs uppercase tracking-wider text-brand-light opacity-75">Ocupación</div>
+                    <div class="font-bold text-sm">Market Avg</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- Sección CAPEX -->
+        <section id="capex" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4 flex items-center">
+                    <span class="icon-circle bg-brand-primary/10 text-brand-primary mr-3">💰</span>
+                    Inversión de Capital Ajustada (CAPEX)
+                </h2>
+                <p class="text-brand-muted text-lg leading-relaxed">
+                    Se incluye al presupuesto la construcción de la piscina y el amueblamiento de alta gama. Tambien incluye la oferta de la constructura (Meraki) y demas costos iniciales.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="chart-container">
+                        <canvas id="capexChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-brand-primary flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-brand-dark">Construcción (Meraki)</h3>
+                            <p class="text-sm text-brand-muted">2 Apts + Rancho (Ref. Oferta Meraki)</p>
+                        </div>
+                        <div class="font-bold text-xl text-brand-dark">₡76.2M</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-brand-accent flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-brand-dark">Piscina 18m²</h3>
+                            <p class="text-sm text-brand-muted">Estimado Mercado CR (Obra Civil)</p>
+                        </div>
+                        <div class="font-bold text-xl text-brand-dark">₡12.0M</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-brand-secondary flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-brand-dark">Mobiliario & Utensilios</h3>
+                            <p class="text-sm text-brand-muted">Equipamiento Llave en Mano (Linea blanca, muebles y decoracion)</p>
+                        </div>
+                        <div class="font-bold text-xl text-brand-dark">₡16.0M*</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección OPEX -->
+        <section id="opex" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4 flex items-center">
+                    <span class="icon-circle bg-brand-accent/10 text-brand-accent mr-3">📊</span>
+                    Estructura de Gastos Operativos (OPEX)
+                </h2>
+                <p class="text-brand-muted text-lg leading-relaxed">
+                    Mantenimiento, costos de administracion* y comisiones: el modelo ahora incluye una gestión externa completa (20%) pero esto puede variar, y un fondo de reserva para reemplazo de muebles (FF&E Reserve) basado en estandares de la industria, garantizando el valor del inmueble
+                </p>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 mb-8">
+                <div class="chart-container" style="max-width: 100%;">
+                    <canvas id="opexChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="text-brand-primary text-2xl mb-2">🏘️</div>
+                    <h4 class="font-bold text-brand-dark mb-2">Comisión Gestión (20%)</h4>
+                    <p class="text-sm text-brand-muted">Tarifa estándar en Guanacaste para Property Managers que manejan limpieza, check-in y atención 24/7.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="text-brand-secondary text-2xl mb-2">🛋️</div>
+                    <h4 class="font-bold text-brand-dark mb-2">Reserva Muebles (5%)</h4>
+                    <p class="text-sm text-brand-muted">Aproximadamente ₡1.1M anuales guardados para reposición de sábanas, vajilla o daños en muebles.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="text-brand-accent text-2xl mb-2">🌊</div>
+                    <h4 class="font-bold text-brand-dark mb-2">Mantenimiento Piscina</h4>
+                    <p class="text-sm text-brand-muted">₡840,000 anuales para técnico de piscina y químicos. Esencial para la calificación de 5 estrellas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Rentabilidad -->
+        <section id="proyecciones" class="scroll-mt-20">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4 flex items-center">
+                    <span class="icon-circle bg-brand-secondary/10 text-brand-secondary mr-3">📈</span>
+                    Proyección de Retorno de Inversión
+                </h2>
+                <p class="text-brand-muted text-lg leading-relaxed">
+                    Con una tarifa conservadora de ₡60k y los costos ajustados, el proyecto es un generador de flujo de caja sólido.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <h3 class="font-bold text-center text-brand-dark mb-4">Escenario de Flujo Acumulado</h3>
+                    <div class="chart-container">
+                        <canvas id="roiChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold text-brand-dark mb-6">Métricas de Rendimiento</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between border-b pb-3">
+                            <span class="text-brand-muted">Utilidad Neta Mensual (Avg)</span>
+                            <span class="font-bold text-brand-secondary">₡868,000</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-3">
+                            <span class="text-brand-muted">Rendimiento Anual Neto (Cap Rate)</span>
+                            <span class="font-bold text-brand-primary">10.02%</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-3">
+                            <span class="text-brand-muted">Tiempo Recuperación (Payback)</span>
+                            <span class="font-bold text-brand-accent">10 Años</span>
+                        </div>
+                        <p class="text-sm text-brand-muted italic mt-4">
+                            *Nota: Este análisis no incluye la plusvalía del terreno ni de la edificación, lo cual aumentaría significativamente el ROI total al momento de una venta. Tambien se valora construir otras dos unidades mas usando las primeras como apalancamiento.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección FUENTES -->
+        <section id="fuentes" class="scroll-mt-20 bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-gray-200">
+            <div class="mb-8 border-b border-gray-100 pb-6">
+                <h2 class="text-3xl font-bold text-brand-dark mb-2">Fuentes y Referencias</h2>
+                <p class="text-brand-muted">Base de datos y documentación técnica utilizada para este análisis.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="text-sm uppercase tracking-widest font-bold text-brand-primary mb-4">Documentación Interna</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-brand-primary mr-3 mt-1">📄</span>
+                            <div>
+                                <span class="font-bold block">Oferta Constructora Meraki</span>
+                                <span class="text-sm text-brand-muted">Referencia: Oferta formal Meraki Soluciones Constructivas. 110m² vivienda + 52m² rancho. Total: ₡76,200,000.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-brand-primary mr-3 mt-1">📄</span>
+                            <div>
+                                <span class="font-bold block">Estudio de Rentabilidad Inicial</span>
+                                <span class="text-sm text-brand-muted">Referencia: Análisis técnico AirDNA (Tamarindo/Huacas) con tarifa base de ₡60,000 y 52% ocupación.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm uppercase tracking-widest font-bold text-brand-accent mb-4">Estándares del Mercado</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-brand-accent mr-3 mt-1">🔗</span>
+                            <div>
+                                <a href="https://app.airdna.co/data/cr/91312" target="_blank" class="font-bold text-brand-dark hover:text-brand-primary underline">AirDNA Market Insights: Guanacaste</a>
+                                <span class="text-sm text-brand-muted block">Validación de ocupación y tarifas promedio para la zona de Santa Cruz y alrededores.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-brand-accent mr-3 mt-1">🔗</span>
+                            <div>
+                                <a href="https://www.airbnb.com/help/article/1857/what-are-airbnb-service-fees" target="_blank" class="font-bold text-brand-dark hover:text-brand-primary underline">Airbnb Service Fees (Host-only)</a>
+                                <span class="text-sm text-brand-muted block">Estructura de comisión del 15% para anfitriones profesionales/comerciales.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-brand-accent mr-3 mt-1">🔗</span>
+                            <div>
+                                <a href="https://www.ipropertymanagement.cr/" target="_blank" class="font-bold text-brand-dark hover:text-brand-primary underline">Property Management Standards CR</a>
+                                <span class="text-sm text-brand-muted block">Benchmark de mercado en Guanacaste: 20% de comisión por gestión integral.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-brand-dark text-white py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="opacity-60 text-sm">© 2024 Análisis de Proyecto Huacas. Datos proyectados sujetos a variaciones del mercado turístico.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de Chart.js
+        const wrapLabel = (label, maxLength = 16) => {
+            if (typeof label !== 'string') return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > maxLength) {
+                    if (currentLine.length > 0) lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            });
+            if (currentLine.trim().length > 0) lines.push(currentLine.trim());
+            return lines;
+        };
+
+        const standardTooltip = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            return Array.isArray(label) ? label.join(' ') : label;
+                        }
+                    }
+                }
+            }
+        };
+
+        // CAPEX CHART
+        const ctxCapex = document.getElementById('capexChart').getContext('2d');
+        new Chart(ctxCapex, {
+            type: 'doughnut',
+            data: {
+                labels: ['Construcción Meraki', 'Piscina & Exteriores', 'Mobiliario Full'].map(l => wrapLabel(l)),
+                datasets: [{
+                    data: [76.2, 12.0, 16.0],
+                    backgroundColor: ['#06B6D4', '#F43F5E', '#10B981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    ...standardTooltip.plugins
+                },
+                cutout: '70%'
+            }
+        });
+
+        // OPEX CHART
+        const ctxOpex = document.getElementById('opexChart').getContext('2d');
+        new Chart(ctxOpex, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Ingreso Bruto Anual',
+                    'Gestión Local (20%)',
+                    'Airbnb Fee (15%)',
+                    'Reserva FF&E (5%)',
+                    'Mantenimiento & Servicios',
+                    'Utilidad Neta'
+                ].map(l => wrapLabel(l, 20)),
+                datasets: [{
+                    data: [22.77, -4.55, -3.41, -1.13, -3.24, 10.42],
+                    backgroundColor: ['#10B981', '#F43F5E', '#F43F5E', '#F43F5E', '#F43F5E', '#06B6D4'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    ...standardTooltip.plugins
+                },
+                scales: {
+                    x: { grid: { color: '#f1f5f9' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // ROI CHART
+        const ctxRoi = document.getElementById('roiChart').getContext('2d');
+        const roiData = [];
+        let total = 0;
+        for(let i=0; i<10; i++) {
+            total += 10.42;
+            roiData.push(total);
+        }
+        new Chart(ctxRoi, {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 10}, (_, i) => `Año ${i+1}`),
+                datasets: [{
+                    label: 'Flujo Neto Acumulado (Millones ₡)',
+                    data: roiData,
+                    backgroundColor: '#10B981',
+                    borderRadius: 4
+                }, {
+                    label: 'Línea de Inversión Inicial',
+                    type: 'line',
+                    data: Array(10).fill(104.2),
+                    borderColor: '#F43F5E',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    ...standardTooltip.plugins
+                }
+            }
+        });
+    </script>
+</body>
+</html>
